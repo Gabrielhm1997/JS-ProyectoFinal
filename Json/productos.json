@@ -1,0 +1,8 @@
+[
+    {"id": 0, "nombre":"Bombom Palito", "precio":100, "img":"img/bombon-palito.jpg","descripcion":"Mezcla perfecta de Chocolate y Crema."},
+    {"id": 1, "nombre":"Palito Helado", "precio":75, "img":"img/palitos-helados.jpg","descripcion":"Perfectos para dias calurosos."},
+    {"id": 2, "nombre":"Postre Helado", "precio":350, "img":"img/postre-helado.jpg","descripcion":"Elegancia y con Gran Sabor."},
+    {"id": 3, "nombre":"Tentacion", "precio":500, "img":"img/tentacion-helado.jpg","descripcion":"Un 1lt de sabor para la familia."},
+    {"id": 4, "nombre":"Topping", "precio":50, "img":"img/topping-helado.jpg","descripcion":"Para agregarle diversión a tu helado."},
+    {"id": 5, "nombre":"Torta Helada", "precio":400, "img":"img/torta-helada.jpg","descripcion":"Para festejar ese dia especial."}
+]
