@@ -135,3 +135,25 @@
 p{
     font-size: large;
 }
+
+/* Mensajes Toastify*/
+
+.mensajePromo{
+    background: lightblue;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+}
+
+.mensajeCompraFinalizada{
+    
+    background-color: "#000046";
+
+    font-size: larger;
+    height: auto;
+    width: 60vw;
+
+    max-width: none;
+    max-height: none;
+     
+}

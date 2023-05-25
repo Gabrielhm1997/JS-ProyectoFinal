@@ -135,6 +135,7 @@ const mostrarProductos = () => {
         const boton = document.getElementById(`btn${producto.id}`);
         boton.addEventListener("click", () => {
             agregarProducto(producto.id);
+            mensajeProductoAgregado();
         })
     })
 }
@@ -192,7 +193,6 @@ const btnVaciarCarrito = document.getElementById("vaciarCarrito");
 btnabrirCarrito.addEventListener('click', (e) => {
     e.preventDefault();
     modalCarrito.classList.add('modalVisible');
-    borrarDOM(contenedorSaludo);
     mostrarCarrito();
 });
 
@@ -344,7 +344,7 @@ const mostrarCarrito = () => {
 
 }
 
-// Destructor de los productos cargados en el carrito
+// Destructor del DOM pasado por parametro
 
 const borrarDOM = (contenedor) => {
 
@@ -407,19 +407,43 @@ btnFinalizarCompra.addEventListener("click", (e) => {
     borrarDOM(contenedorPago);
     carrito = [];
     localStorage.clear();
-    saludoCompra();
+    mensajeCompra();
 })
 
-// Mensaje de Compra
+//              Libreria Toastify
 
-const contenedorSaludo = document.getElementById("saludoCompra");
+// Mensaje de producto agregado
+const mensajeProductoAgregado = () => {
 
-const saludoCompra = () => {
+    Toastify({
+        text: "Producto agregado al carrito",
+        duration: 2000,
+        gravity: "top",
+        position: "center",
+        style: {
+            background: "#000046",
+        },
 
-    let saludoCompra = document.createElement("div");
+    }).showToast();
 
-    saludoCompra.innerHTML = `<p class="m-0 text-center">Gracias por su compra</p>`;
+};
 
-    contenedorSaludo.appendChild(saludoCompra);
+// Mensaje de compra finalizada
 
-}
+const mensajeCompra = () =>{
+    Toastify({
+        text: "Gracias por su compra",
+        duration: 3000,
+        className: "mensajeCompraFinalizada text-center",
+        gravity: "bottom",
+        position: "center",
+        style: {
+            background: "#000046",
+        },
+
+        offset: {
+            y: 30,
+        },
+
+    }).showToast();
+};
