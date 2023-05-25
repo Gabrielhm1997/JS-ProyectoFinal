@@ -400,14 +400,22 @@ const mostrarPago = () => {
 // Finalizar Compra
 
 btnFinalizarCompra.addEventListener("click", (e) => {
-    e.preventDefault();
-    modalPago.classList.remove('modalVisiblePago');
-    modalCarrito.classList.remove('modalVisible');
-    borrarDOM(contenedorCarrito);
-    borrarDOM(contenedorPago);
-    carrito = [];
-    localStorage.clear();
-    mensajeCompra();
+
+    if (carrito.length === 0) {
+        mensajeCarritoVacio();
+
+    } else {
+        e.preventDefault();
+        modalPago.classList.remove('modalVisiblePago');
+        modalCarrito.classList.remove('modalVisible');
+        borrarDOM(contenedorCarrito);
+        borrarDOM(contenedorPago);
+        carrito = [];
+        localStorage.clear();
+        mensajeCompra();
+    }
+
+   
 })
 
 //              Libreria Toastify
@@ -417,6 +425,22 @@ const mensajeProductoAgregado = () => {
 
     Toastify({
         text: "Producto agregado al carrito",
+        duration: 2000,
+        gravity: "top",
+        position: "center",
+        style: {
+            background: "#000046",
+        },
+
+    }).showToast();
+
+};
+
+// Mensaje de Carrito Vacio
+const mensajeCarritoVacio = () => {
+
+    Toastify({
+        text: "Su carrito esta vacio",
         duration: 2000,
         gravity: "top",
         position: "center",
