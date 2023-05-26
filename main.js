@@ -1,3 +1,13 @@
+// Variables Globales
+
+let totalProductos = 0;
+let subTotal = 0;
+let totalPagar = 0;
+
+const iva = 1.21;
+const codigoPromo = "ENVIO";
+let codigoConfirmado = false;
+
 // Constructores
 
 class Producto {
@@ -36,7 +46,6 @@ fetch(stockProductos)
             productos.push(new Producto(objeto));
         })
         // Funcion principal
-
         mostrarProductos();
 
     })
@@ -57,47 +66,73 @@ if (localStorage.getItem("carrito")) {
 const guardarCarrito = () => {
 
     localStorage.setItem("carrito", JSON.stringify(carrito));
-
-}
+};
 
 // Funciones Basicas
 
-let calcularSubTotal = (a, b) => { return a * b };
+let calcularSubTotalProducto = (precio, cantidad) => { return precio * cantidad };
 
-let calcularIVA = (a) => { return a * iva };
+let calcularTotalProductos = () => {
 
-let calcularDescuento = (a) => { return a - (a * 0.2) };
-
-let total = 0;
-
-let calcularTotal = () => {
-
-    total = 0;
+    totalProductos = 0;
 
     carrito.forEach(producto => {
 
-        total += (producto.cantidad * producto.precio);
+        totalProductos += (producto.cantidad * producto.precio);
 
     })
-    return total;
+
+    return totalProductos;
 };
 
-const iva = 1.21;
+let confirmarCodigoPromo = (codigo) => {
 
-let precioFinal = 0;
-
-const calcularPrecioFinal = () => {
-
-    precioFinal = 0;
-
-    if (total >= 1000) {
-        precioFinal = calcularIVA(calcularDescuento(total));
-        return precioFinal;
+    if (codigo == codigoPromo) {
+        mensajeCodigoCorrecto();
+        codigoConfirmado = true;
+    } else if (codigo == "") {
+        mensajeCodigoVacio();
+        codigoConfirmado = false;
     } else {
-        precioFinal = calcularIVA(total);
-        return precioFinal;
+        mensajeCodigoInCorrecto();
+        codigoConfirmado = false;
     }
 
+};
+
+let calcularEnvio = () => {
+
+    subTotal = 0;
+
+    if (codigoConfirmado) {
+        return 0;
+    } else {
+        subTotal += 200;
+        return 200;
+    }
+};
+
+let calcularDescuento = () => {
+
+    if (totalProductos >= 1000) {
+        totalProductos -= (totalProductos * 0.2);
+        return 20;
+    } else {
+        return 0;
+    }
+};
+
+let calcularSubTotal = () => {
+
+    subTotal += totalProductos;
+    return subTotal;
+};
+
+let calcularIVA = () => {
+
+    totalPagar = subTotal * iva;
+
+    return totalPagar;
 };
 
 // Mostrar por el HTML los Productos
@@ -105,6 +140,8 @@ const calcularPrecioFinal = () => {
 const contenedorProductos = document.getElementById("contenedorProductos");
 
 const mostrarProductos = () => {
+
+    mensajePopupPromo();
 
     productos.forEach(producto => {
 
@@ -175,9 +212,6 @@ const eliminarProducto = (id) => {
     console.log(carrito);
 
 }
-
-
-
 
 /*               TODO LO RELACIONADO AL MODAL POR EL CUAL SE MUESTRA EL CARRITO             */
 
@@ -258,20 +292,17 @@ const mostrarCarrito = () => {
         
         
         <div class="col-3 m-0 p-0 d-flex align-items-center justify-content-center row">
-            <button class="col-3" id="btn+${producto.id}">+</button>
+            <button class="col-3" id="btn-${producto.id}">-</button>
             <div class="col-3 d-flex justify-content-center">
                 <p class="m-0">${producto.cantidad}</p>
             </div>
-            <button class="col-3" id="btn-${producto.id}">-</button>
+            <button class="col-3" id="btn+${producto.id}">+</button>
         </div>
 
         <div class="col-2 m-0 p-0">
-            <p class="text-center m-0">$${calcularSubTotal(producto.precio, producto.cantidad)}</p>
+            <p class="text-center m-0">$${calcularSubTotalProducto(producto.precio, producto.cantidad)}</p>
         </div>
-        
-        
         `
-
         contenedorCarrito.appendChild(item);
 
         // Boton Sumar producto
@@ -298,49 +329,16 @@ const mostrarCarrito = () => {
 
     // Mostrar Total
 
-    let precioTotal = document.createElement("div");
-    precioTotal.classList.add("row", "justify-content-end", "align-items-center");
+    let precioTotalProductos = document.createElement("div");
+    precioTotalProductos.classList.add("row", "justify-content-end", "align-items-center");
 
-    precioTotal.innerHTML = `
+    precioTotalProductos.innerHTML = `
+
+    <p class="m-0 col-2 text-end">Total Productos =</p>
     
-    <p class="m-0 col-8 text-end">Se aplicara el IVA en el Precio Final</p>
+    <p class="m-0 col-2 text-center">$${calcularTotalProductos()}</p>`;
 
-    <p class="m-0 col-2 text-end">Total =</p>
-    
-    <p class="m-0 col-2 text-center">$${calcularTotal()}</p>`;
-
-    contenedorCarrito.appendChild(precioTotal);
-
-    // Mostrar Precio Final Iva + Descuento
-
-    let precioFinal = document.createElement("div");
-    precioFinal.classList.add("row", "justify-content-end", "align-items-center");
-
-    if (total >= 1000) {
-
-        precioFinal.innerHTML = `
-    
-            <p class="m-0 col-8 text-end">Descuento del 20% aplicado</p>
-
-            <p class="m-0 col-2 text-end" > Precio Final =</p >
-
-            <p class="m-0 col-2 text-center">$${calcularPrecioFinal().toFixed(2)}</p>`;
-
-    } else {
-
-        precioFinal.innerHTML = `
-
-
-            <p class="m-0 col-2 text-end" > Precio Final =</p >
-
-            <p class="m-0 col-2 text-center">$${calcularPrecioFinal().toFixed(2)}</p>`;
-
-
-    }
-
-
-    contenedorCarrito.appendChild(precioFinal);
-
+    contenedorCarrito.appendChild(precioTotalProductos);
 
 }
 
@@ -358,7 +356,7 @@ const borrarDOM = (contenedor) => {
 
 // Modal Pago
 
-// Botones para Mostrar, Cerrar Y Vaciar el Pago
+// Botones para Mostrar, Cerrar Y Finalizar el Pago
 
 const btnabrirPago = document.getElementById('pagarCarrito');
 const modalPago = document.getElementById('modalPago');
@@ -381,20 +379,65 @@ btnCerrarPago.addEventListener('click', (e) => {
     borrarDOM(contenedorPago);
 });
 
-// Mostrar Mensaje de Pago
+// Mostrar Modal de Pago
 
 const contenedorPago = document.getElementById("contenedorPago");
 
 const mostrarPago = () => {
 
-    const mensaje = document.createElement("div");
+    // Mostrar Precio Final Iva + Descuento
 
-    mensaje.innerHTML = `
+    let contenedorInfoPago = document.createElement("div");
+
+    contenedorInfoPago.innerHTML = `
     
-    <p class="m-0 text-start">Total a Pagar = $${precioFinal.toFixed(2)}</p>`;
+    <div class="d-flex row">
+        <p class="m-0 col-2 text-end">Total Productos =</p>
+        <p class="m-0 col-2 text-end">$${calcularTotalProductos()}</p>
+    </div>
 
-    contenedorPago.appendChild(mensaje);
+    <div class="d-flex row">
+        <p class="m-0 col-2 text-end">Envio =</p>
+        <p class="m-0 col-2 text-end">$${calcularEnvio()}</p>
+        <input type="text" id="inputPromo" placeholder="Ingrese Su codigo Promocional" class="m-0 col-4">
+    </div>
 
+    <div class="d-flex row">
+        <p class="m-0 col-2 text-end">Descuento =</p>
+        <p class="m-0 col-2 text-end">${calcularDescuento()}%</p>
+    </div>
+
+    <div class="d-flex row">
+        <p class="m-0 col-2 text-end">Subtotal =</p>
+        <p class="m-0 col-2 text-end">$${calcularSubTotal().toFixed(2)}</p>
+    </div>
+
+    <div class="d-flex row">
+        <p class="m-0 col-2 text-end">Total a Pagar =</p>
+        <p class="m-0 col-2 text-end">$${calcularIVA().toFixed(2)}</p>
+    </div>
+    `;
+
+    contenedorPago.appendChild(contenedorInfoPago);
+
+    // Input 
+
+    const input = document.getElementById("inputPromo");
+
+    input.addEventListener("keyup", (e) => {
+
+        e.preventDefault();
+
+        if (e.code === "Enter") {
+
+            let inputValor = document.getElementById("inputPromo").value.toUpperCase();
+
+            confirmarCodigoPromo(inputValor);
+            borrarDOM(contenedorPago);
+            inputValor = "";
+            mostrarPago();
+        }
+    })
 }
 
 // Finalizar Compra
@@ -410,12 +453,13 @@ btnFinalizarCompra.addEventListener("click", (e) => {
         modalCarrito.classList.remove('modalVisible');
         borrarDOM(contenedorCarrito);
         borrarDOM(contenedorPago);
+        mensajePopupPromo();
         carrito = [];
         localStorage.clear();
         mensajeCompra();
     }
 
-   
+
 })
 
 //              Libreria Toastify
@@ -454,7 +498,7 @@ const mensajeCarritoVacio = () => {
 
 // Mensaje de compra finalizada
 
-const mensajeCompra = () =>{
+const mensajeCompra = () => {
     Toastify({
         text: "Gracias por su compra",
         duration: 3000,
@@ -471,3 +515,89 @@ const mensajeCompra = () =>{
 
     }).showToast();
 };
+
+// Mensaje Promocion
+
+const mensajeCodigoCorrecto = () => {
+
+    Toastify({
+        text: "Codigo Correto",
+        duration: 3000,
+        className: "mensajeCompraFinalizada text-center",
+        gravity: "top",
+        position: "center",
+        style: {
+            background: "#000046",
+        },
+
+        offset: {
+            y: 30,
+        },
+
+    }).showToast();
+};
+
+const mensajeCodigoInCorrecto = () => {
+
+    Toastify({
+        text: "Codigo Incorreto",
+        duration: 3000,
+        className: "mensajeCompraFinalizada text-center",
+        gravity: "top",
+        position: "center",
+        style: {
+            background: "#000046",
+        },
+
+        offset: {
+            y: 30,
+        },
+
+    }).showToast();
+};
+
+const mensajeCodigoVacio = () => {
+
+    Toastify({
+        text: "Ingrese su Codigo",
+        duration: 3000,
+        className: "mensajeCompraFinalizada text-center",
+        gravity: "top",
+        position: "center",
+        style: {
+            background: "#000046",
+        },
+
+        offset: {
+            y: 30,
+        },
+
+    }).showToast();
+};
+
+//      Asincronia
+
+// Pop-up de Codigo Promocional
+
+const mensajePopupPromo = () => {
+
+    const intervalo = setInterval(() => {
+
+        Toastify({
+            text: "Codigo: Envio",
+            duration: 3000,
+            className: "mensajePromo text-center d-flex align-items-center justify-content-center",
+            gravity: "top",
+            position: "right",
+            style: {
+                background: "#000046",
+            },
+        }).showToast();
+
+        if (codigoConfirmado) {
+            clearInterval(intervalo);
+        }
+
+    }, 6000)
+
+}
