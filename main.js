@@ -1,6 +1,8 @@
 // Variables Globales
 
+let subTotalProductos = 0;
 let totalProductos = 0;
+
 let subTotal = 0;
 let totalPagar = 0;
 
@@ -72,31 +74,40 @@ const guardarCarrito = () => {
 
 let calcularSubTotalProducto = (precio, cantidad) => { return precio * cantidad };
 
-let calcularTotalProductos = () => {
+let calcularSubTotalProductos = () => {
 
-    totalProductos = 0;
+    subTotalProductos = 0;
 
     carrito.forEach(producto => {
 
-        totalProductos += (producto.cantidad * producto.precio);
+        subTotalProductos += (producto.cantidad * producto.precio);
 
     })
 
-    return totalProductos;
+    return subTotalProductos;
 };
 
 let confirmarCodigoPromo = (codigo) => {
 
-    if (codigo == codigoPromo) {
-        mensajeCodigoCorrecto();
-        codigoConfirmado = true;
-    } else if (codigo == "") {
-        mensajeCodigoVacio();
-        codigoConfirmado = false;
+
+    if(codigoConfirmado){
+        mensajeCodigoYaReclamado();
+
     } else {
-        mensajeCodigoInCorrecto();
-        codigoConfirmado = false;
+
+        if (codigo == codigoPromo) {
+            mensajeCodigoCorrecto();
+            codigoConfirmado = true;
+        } else if (codigo == "") {
+            mensajeCodigoVacio();
+            // codigoConfirmado = false;
+        } else {
+            mensajeCodigoInCorrecto();
+            // codigoConfirmado = false;
+        }
     }
+
+   
 
 };
 
@@ -114,10 +125,11 @@ let calcularEnvio = () => {
 
 let calcularDescuento = () => {
 
-    if (totalProductos >= 1000) {
-        totalProductos -= (totalProductos * 0.2);
+    if (subTotalProductos >= 1000) {
+        totalProductos = subTotalProductos - (subTotalProductos * 0.2);
         return 20;
     } else {
+        totalProductos = subTotalProductos;
         return 0;
     }
 };
@@ -327,16 +339,16 @@ const mostrarCarrito = () => {
 
     })
 
-    // Mostrar Total
+    // Mostrar SubTotal de los Productos
 
     let precioTotalProductos = document.createElement("div");
     precioTotalProductos.classList.add("row", "justify-content-end", "align-items-center");
 
     precioTotalProductos.innerHTML = `
 
-    <p class="m-0 col-2 text-end">Total Productos =</p>
+    <p class="m-0 col-3 text-end">SubTotal Productos =</p>
     
-    <p class="m-0 col-2 text-center">$${calcularTotalProductos()}</p>`;
+    <p class="m-0 col-2 text-center">$${calcularSubTotalProductos()}</p>`;
 
     contenedorCarrito.appendChild(precioTotalProductos);
 
@@ -392,28 +404,33 @@ const mostrarPago = () => {
     contenedorInfoPago.innerHTML = `
     
     <div class="d-flex row">
-        <p class="m-0 col-2 text-end">Total Productos =</p>
-        <p class="m-0 col-2 text-end">$${calcularTotalProductos()}</p>
+        <p class="m-0 col-3 text-end">SubTotal Productos =</p>
+        <p class="m-0 col-2 text-end">$${calcularSubTotalProductos()}</p>
     </div>
 
     <div class="d-flex row">
-        <p class="m-0 col-2 text-end">Envio =</p>
+    <p class="m-0 col-3 text-end">Descuento =</p>
+    <p class="m-0 col-2 text-end">${calcularDescuento()}%</p>
+    </div>
+
+    <div class="d-flex row">
+    <p class="m-0 col-3 text-end">Total Productos =</p>
+    <p class="m-0 col-2 text-end">$${totalProductos}</p>
+    </div>
+
+    <div class="d-flex row">
+        <p class="m-0 col-3 text-end">Envio =</p>
         <p class="m-0 col-2 text-end">$${calcularEnvio()}</p>
         <input type="text" id="inputPromo" placeholder="Ingrese Su codigo Promocional" class="m-0 col-4">
     </div>
 
     <div class="d-flex row">
-        <p class="m-0 col-2 text-end">Descuento =</p>
-        <p class="m-0 col-2 text-end">${calcularDescuento()}%</p>
-    </div>
-
-    <div class="d-flex row">
-        <p class="m-0 col-2 text-end">Subtotal =</p>
+        <p class="m-0 col-3 text-end">Subtotal =</p>
         <p class="m-0 col-2 text-end">$${calcularSubTotal().toFixed(2)}</p>
     </div>
 
     <div class="d-flex row">
-        <p class="m-0 col-2 text-end">Total a Pagar =</p>
+        <p class="m-0 col-3 text-end">Total a Pagar =</p>
         <p class="m-0 col-2 text-end">$${calcularIVA().toFixed(2)}</p>
     </div>
     `;
@@ -454,6 +471,7 @@ btnFinalizarCompra.addEventListener("click", (e) => {
         borrarDOM(contenedorCarrito);
         borrarDOM(contenedorPago);
         mensajePopupPromo();
+        codigoConfirmado = false;
         carrito = [];
         localStorage.clear();
         mensajeCompra();
@@ -560,6 +578,25 @@ const mensajeCodigoVacio = () => {
 
     Toastify({
         text: "Ingrese su Codigo",
+        duration: 3000,
+        className: "mensajeCompraFinalizada text-center",
+        gravity: "top",
+        position: "center",
+        style: {
+            background: "#000046",
+        },
+
+        offset: {
+            y: 30,
+        },
+
+    }).showToast();
+};
+
+const mensajeCodigoYaReclamado = () => {
+
+    Toastify({
+        text: "Ya reclamo su Codigo",
         duration: 3000,
         className: "mensajeCompraFinalizada text-center",
         gravity: "top",
