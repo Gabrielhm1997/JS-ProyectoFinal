@@ -616,20 +616,47 @@ const mensajeCodigoYaReclamado = () => {
 
 // Pop-up de Codigo Promocional
 
+/* Este pop-up no lo hice con la libreria "Toastify" porque se me acoplaba con los mensajes de "Producto agregado",
+investigue en la documentacion propia de la libreria, pero no encontre forma de solucionar mi problema,
+asi que me hice un "Toast" propio.*/
+
 const mensajePopupPromo = () => {
+
+    const contenedorToast = document.getElementById("contenedorToast");
 
     const intervalo = setInterval(() => {
 
-        Toastify({
-            text: "Codigo: Envio",
-            duration: 3000,
-            className: "mensajePromo text-center d-flex align-items-center justify-content-center",
-            gravity: "top",
-            position: "right",
-            style: {
-                background: "#000046",
-            },
-        }).showToast();
+        // Toastify({
+        //     text: "Codigo: Envio",
+        //     duration: 3000,
+        //     className: "mensajePromo text-center d-flex align-items-center justify-content-center",
+        //     gravity: "top",
+        //     position: "right",
+        //     style: {
+        //         background: "#000046",
+        //     },
+        // }).showToast();
+
+        
+
+        let toastPrueba = document.createElement("div");
+
+        toastPrueba.id = "toastPrueba";
+
+        toastPrueba.classList.add("text-center", "d-flex", "align-items-center", "justify-content-center", "row");
+
+        toastPrueba.innerHTML= `
+        
+        <p class="col-12 m-0">Codigo:</p>
+        <p class="col-12 m-0">"ENVIO"</p>
+
+        `
+
+        contenedorToast.appendChild(toastPrueba);
+        
+        setTimeout(() =>{
+            borrarDOM(contenedorToast);
+        }, 3000)
 
         if (codigoConfirmado) {
             clearInterval(intervalo);
