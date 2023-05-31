@@ -1,8 +1,14 @@
 // Variables Globales
 
+/*Estas dos varibles almacenan solamente el valor de los Productos,
+"subTotalProductos" es el valor sin el descuento aplicado
+ Y "totalProductos" es el valor de los productos una vez calculado el descuento (haya o no descuento)*/
 let subTotalProductos = 0;
 let totalProductos = 0;
 
+/*Estas otras dos variables estan relacionadas con el precio final a pagar
+Siendo "subTotal" el valor de los Productos mas el Envio
+Y "totalPagar" el valor valor con el IVA incluido*/
 let subTotal = 0;
 let totalPagar = 0;
 
@@ -89,8 +95,7 @@ let calcularSubTotalProductos = () => {
 
 let confirmarCodigoPromo = (codigo) => {
 
-
-    if(codigoConfirmado){
+    if (codigoConfirmado) {
         mensajeCodigoYaReclamado();
 
     } else {
@@ -100,15 +105,10 @@ let confirmarCodigoPromo = (codigo) => {
             codigoConfirmado = true;
         } else if (codigo == "") {
             mensajeCodigoVacio();
-            // codigoConfirmado = false;
         } else {
             mensajeCodigoInCorrecto();
-            // codigoConfirmado = false;
         }
     }
-
-   
-
 };
 
 let calcularEnvio = () => {
@@ -146,6 +146,18 @@ let calcularIVA = () => {
 
     return totalPagar;
 };
+
+// Destructor del DOM pasado por parametro
+
+const borrarDOM = (contenedor) => {
+
+    if (contenedor.hasChildNodes()) {
+        while (contenedor.childNodes.length >= 1) {
+            contenedor.removeChild(contenedor.firstChild);
+        }
+    }
+
+}
 
 // Mostrar por el HTML los Productos
 
@@ -242,7 +254,7 @@ btnabrirCarrito.addEventListener('click', (e) => {
     mostrarCarrito();
 });
 
-//Boton Cerrar
+//Boton Cerrar "Carrito"
 
 btnCerrarCarrito.addEventListener('click', (e) => {
     e.preventDefault();
@@ -250,7 +262,7 @@ btnCerrarCarrito.addEventListener('click', (e) => {
     borrarDOM(contenedorCarrito);
 });
 
-// Boton Vaciar Carrito
+// Boton Vaciar "Carrito"
 
 btnVaciarCarrito.addEventListener('click', (e) => {
     e.preventDefault();
@@ -354,21 +366,10 @@ const mostrarCarrito = () => {
 
 }
 
-// Destructor del DOM pasado por parametro
 
-const borrarDOM = (contenedor) => {
+//                  Modal "Pagar"
 
-    if (contenedor.hasChildNodes()) {
-        while (contenedor.childNodes.length >= 1) {
-            contenedor.removeChild(contenedor.firstChild);
-        }
-    }
-
-}
-
-// Modal Pago
-
-// Botones para Mostrar, Cerrar Y Finalizar el Pago
+// Botones para Abrir y Cerrar la ventana de "Pagar"
 
 const btnabrirPago = document.getElementById('pagarCarrito');
 const modalPago = document.getElementById('modalPago');
@@ -397,7 +398,7 @@ const contenedorPago = document.getElementById("contenedorPago");
 
 const mostrarPago = () => {
 
-    // Mostrar Precio Final Iva + Descuento
+    // Resumen o "Ticket" de la Compra
 
     let contenedorInfoPago = document.createElement("div");
 
@@ -457,7 +458,7 @@ const mostrarPago = () => {
     })
 }
 
-// Finalizar Compra
+// Boton Finalizar Compra
 
 btnFinalizarCompra.addEventListener("click", (e) => {
 
@@ -515,7 +516,6 @@ const mensajeCarritoVacio = () => {
 };
 
 // Mensaje de compra finalizada
-
 const mensajeCompra = () => {
     Toastify({
         text: "Gracias por su compra",
@@ -534,7 +534,7 @@ const mensajeCompra = () => {
     }).showToast();
 };
 
-// Mensaje Promocion
+// Posibles Mensajes al ingresar el Codigo de Promocion
 
 const mensajeCodigoCorrecto = () => {
 
@@ -626,35 +626,23 @@ const mensajePopupPromo = () => {
 
     const intervalo = setInterval(() => {
 
-        // Toastify({
-        //     text: "Codigo: Envio",
-        //     duration: 3000,
-        //     className: "mensajePromo text-center d-flex align-items-center justify-content-center",
-        //     gravity: "top",
-        //     position: "right",
-        //     style: {
-        //         background: "#000046",
-        //     },
-        // }).showToast();
 
-        
+        let toastCodigo = document.createElement("div");
 
-        let toastPrueba = document.createElement("div");
+        toastCodigo.id = "toastCodigo";
 
-        toastPrueba.id = "toastPrueba";
+        toastCodigo.classList.add("text-center", "d-flex", "align-items-center", "justify-content-center", "row");
 
-        toastPrueba.classList.add("text-center", "d-flex", "align-items-center", "justify-content-center", "row");
-
-        toastPrueba.innerHTML= `
+        toastCodigo.innerHTML = `
         
         <p class="col-12 m-0">Codigo:</p>
         <p class="col-12 m-0">"ENVIO"</p>
 
         `
 
-        contenedorToast.appendChild(toastPrueba);
-        
-        setTimeout(() =>{
+        contenedorToast.appendChild(toastCodigo);
+
+        setTimeout(() => {
             borrarDOM(contenedorToast);
         }, 3000)
 
