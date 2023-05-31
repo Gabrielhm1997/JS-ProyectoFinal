@@ -45,6 +45,9 @@ class ProductoCargado {
 let productos = [];
 const stockProductos = "Json/productos.json";
 
+/* Dejo este comentario para avisar que el al querer tomar los datos desde una api con Fetch
+en el navegador tira un error de seguridad de "CORS", lo hable con el tutor y me dijo que no habia
+problema en dejarlo asi, que lo unico que tenia que hacer era abrir el proyecto con LIVE SERVER*/
 fetch(stockProductos)
     .then(respuesta => respuesta.json())
     .then(datos => {
@@ -57,7 +60,7 @@ fetch(stockProductos)
         mostrarProductos();
 
     })
-    .catch(error => console.log(error))
+    .catch(error => console.log(error));
 
 // Array Carrito 
 
